@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-type User = {
+export type User = {
   "id": number,
   "avatar_url": string,
   "name": string,
@@ -22,6 +22,22 @@ const useUsers = () => {
   }
 }
 
+const useUsersFiltered = (serviceId: number | undefined) => {
+  const { isLoading, error, data } = useQuery<User[]>(["users", serviceId], () =>
+    fetch(`http://localhost:3001/users.json?service_id=${serviceId}`).then(res =>
+      res.json()
+    ),
+    { enabled: serviceId !== undefined }
+  );
+
+  return {
+    users: data as User[] | undefined,
+    isLoading,
+    error,
+  }
+}
+
 export {
-  useUsers
+  useUsers,
+  useUsersFiltered,
 };
